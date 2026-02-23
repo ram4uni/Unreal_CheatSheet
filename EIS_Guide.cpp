@@ -1,3 +1,5 @@
+
+
 void AMovingBox::BeginPlay()
 {
 	Super::BeginPlay();
@@ -16,6 +18,17 @@ void AMovingBox::BeginPlay()
 		if (UEnhancedInputComponent* EIC =
 			Cast<UEnhancedInputComponent>(PC->InputComponent)) {
 
+			if (PrintAction)
+			{
+				EIC->BindAction(
+					PrintAction,
+					ETriggerEvent::Started,
+					this,
+					&AMovingBox::PrintMessage
+				);
+			}
+
+
 			if (JumpAction)
 			{
 				EIC->BindAction(
@@ -25,24 +38,38 @@ void AMovingBox::BeginPlay()
 					&AMovingBox::Jump
 				);
 			}
+			
+			if (MoveAction)
+			{
+				EIC->BindAction(
+					MoveAction,
+					ETriggerEvent::Triggered,
+					this,
+					&AMovingBox::Move
+				);
+			}
 		}
-        
-        	if (UEnhancedInputComponent* EIC =
-		Cast<UEnhancedInputComponent>(PC->InputComponent))
-	{
-		if (MoveAction)
-		{
-			EIC->BindAction(
-				MoveAction,
-				ETriggerEvent::Triggered,
-				this,
-				&AMovingBox::Move
-			);
-		}
-	}
 
 	}	
 }
+
+
+
+void AMovingBox::PrintMessage()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,                 // New message every time
+			2.0f,               // Duration (seconds)
+			FColor::Green,      // Text colour
+			TEXT("Hello from the Cube!")
+		);
+	}
+
+}
+
+
 
 void AMovingBox::Jump() {
 	if (!BoxMesh) return;
